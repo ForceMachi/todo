@@ -14,7 +14,7 @@
             <button type="submit">Logout</button>
         </form>
     {% else %}
-        <a href="">Login</a>
+        <a href="{% url 'LoginUser' %}">Login</a>
         <a href="{% url 'SignUpUser' %}">Sign Up</a>
     {% endif %}
 
