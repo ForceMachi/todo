@@ -1,14 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
-
+from .forms import Todo_form
+from .models import Todo
 
 
 def home(request):
     return render(request, 'todo/home.html')
-
 
 def SignUpUser(request):
     if request.method == "GET":
@@ -30,7 +30,8 @@ def SignUpUser(request):
 
 
 def CurrentTodo(request):
-    return render(request, 'todo/CurrentTodo.html')
+    data = Todo.objects.filter(user=request.user, datecompleted__isnull=True)
+    return render(request, 'todo/CurrentTodo.html', {'data':data})
 
 
 def LogoutUser(request):
@@ -51,3 +52,22 @@ def LoginUser(request):
         else:
             login(request, user)
             return redirect('CurrentTodo')
+
+
+def Create(request):
+    if request.method == 'GET':
+        return render(request, 'todo/Create.html', {'form':Todo_form()})
+    else:
+        try:
+            form = Todo_form(request.POST)
+            newtodo = form.save(commit=False)
+            newtodo.user = request.user
+            newtodo.save()
+            return redirect('CurrentTodo')
+        except ValueError:
+            return render(request, 'todo/Create.html', {'form':Todo_form(), 'ERROR':'Bad data passed in. Try again!'})
+
+
+def viewtodo(request, todo_pk):
+    goal = get_object_or_404(Todo, pk=todo_pk)
+    return render(request, 'todo/viewtodo.html', {'data':goal})

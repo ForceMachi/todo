@@ -3,4 +3,11 @@
 
 {% block content %}
     <h1>Current Todo</h1>
+    <ul>
+        {% for item in data %}
+            <li {% if item.important %}style="font-weight: bold"{% endif %}>
+            <a href="{% url 'viewtodo' item.id %}">{{ item.tittle }}</a></li>
+                <p style="margin-top: 0;">{{ item.memo }}</p><br>
+        {% endfor %}
+    </ul>
 {% endblock %}
