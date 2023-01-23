@@ -69,5 +69,15 @@ def Create(request):
 
 
 def viewtodo(request, todo_pk):
-    goal = get_object_or_404(Todo, pk=todo_pk)
-    return render(request, 'todo/viewtodo.html', {'data':goal})
+    goal = get_object_or_404(Todo, pk=todo_pk, user=request.user)
+    if request.method == 'GET':
+        form = Todo_form(instance=goal)
+        return render(request, 'todo/viewtodo.html', {'data':goal, 'form':form})
+    else:
+        try:
+            form = Todo_form(request.POST, instance=goal)
+            form.save()
+            return redirect('CurrentTodo')
+        except ValueError:
+            return render(request, 'todo/viewtodo.html', {'data':goal, 'form':form, 'ERROR':'Bad info!'})
+

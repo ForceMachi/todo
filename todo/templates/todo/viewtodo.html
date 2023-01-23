@@ -2,6 +2,14 @@
 
 
 {% block content %}
+    {{ ERROR }}
     <h1>{{ data.tittle }}</h1>
     <p>{{ data.memo }}</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+    </form>
+
 {% endblock %}
